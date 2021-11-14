@@ -8,11 +8,26 @@
 
 const WCHAR window_title[] = L"blankwindow";
 const WCHAR window_class[] = L"blankwindowclass";
+const LONG window_width = 320;
+const LONG window_height = 160;
 
 LRESULT CALLBACK window_proc(HWND _window, UINT _message, WPARAM _wparam, LPARAM _lparam)
 {
     switch (_message)
     {
+    case WM_GETMINMAXINFO:
+    {
+        MINMAXINFO *mminfo = (MINMAXINFO *)_lparam;
+        mminfo->ptMaxSize.x = window_width;
+        mminfo->ptMaxSize.y = window_height;
+        mminfo->ptMaxPosition.x = 0;
+        mminfo->ptMaxPosition.y = 0;
+        mminfo->ptMinTrackSize.x = window_width;
+        mminfo->ptMinTrackSize.y = window_height;
+        mminfo->ptMaxTrackSize.x = window_width;
+        mminfo->ptMaxTrackSize.y = window_height;
+        return 0;
+    }
     case WM_DESTROY:
         PostQuitMessage(0);
         break;
@@ -46,7 +61,7 @@ inline ATOM _register_class(HINSTANCE _instance)
 inline BOOL _init_instance(HINSTANCE _instance)
 {
     HWND window = CreateWindowW(window_class, window_title, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0, 360, 240, NULL, NULL, _instance, NULL);
+        CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, _instance, NULL);
 
     if (!window)
     {
